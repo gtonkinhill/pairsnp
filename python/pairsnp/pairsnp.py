@@ -107,6 +107,8 @@ def main():
 
     sparse_matrix = calculate_snp_matrix(align_length, consensus, args.filename, len(seq_names))
 
+    print(np.sum(1*(sparse_matrix[2,].todense()>0)))
+
     d = (1*(sparse_matrix==97)) * (sparse_matrix.transpose()==97)
     d = d + (1*(sparse_matrix==99) * (sparse_matrix.transpose()==99))
     d = d + (1*(sparse_matrix==103) * (sparse_matrix.transpose()==103))

@@ -20,7 +20,7 @@ import_fasta_sparse <- function(fasta.file.name){
   # Cheat a bit by checking the file using ape
   invisible(capture.output(ape::read.FASTA(fasta.file.name, type = "DNA")))
 
-  snp.data <- fastbaps:::import_fasta_to_vector_each_nt(fasta.file.name)
+  snp.data <- pairsnp:::import_fasta_to_vector_each_nt(fasta.file.name)
   snp.data$seq.names <-  gsub("^>","",snp.data$seq.names)
 
   snp.matrix <- Matrix::sparseMatrix(i=snp.data$i,

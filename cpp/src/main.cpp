@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
 
   // Now calculate the consensus sequence
-  int consensus[seq_length];
+  uvec consensus(seq_length);
   int n_seqs = n+1;
   std::string seq_names[n_seqs];
 
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     for(int i=0; i<5; i++){
       if(allele_counts[i][j]>max_allele){
         max_allele = allele_counts[i][j];
-        consensus[j] = i;
+        consensus(j) = i;
       }
     }
     max_allele = -1;
@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
   std::vector<uint> m_i;
   std::vector<uint> m_j;
   std::vector<uint> m_x;
-  m_i.reserve(2*10000);
-  m_j.reserve(2*10000);
-  m_x.reserve(2*10000);
+  m_i.reserve(50000);
+  m_j.reserve(50000);
+  m_x.reserve(50000);
 
 
   // open a new stream to the fasta file TODO: I think there's a cleaner way of doing this.
@@ -128,34 +128,37 @@ int main(int argc, char *argv[])
   char temp_char;
   int n_snps = 0;
   n=0;
+
+  
   while((l = ks2.read(seq)) >= 0) {
     // Record sequence names
     seq_names[n] = seq.name;
-
-    if ((m_i.capacity() - 2*n_snps)<100){
+    if ((m_i.capacity() - n_snps)<100){
       // Reserve memory
+      cout << "resizing!" << endl;
       m_i.reserve( 2*m_i.capacity() );
       m_j.reserve( 2*m_j.capacity() );
       m_x.reserve( 2*m_x.capacity() );
     }
+
     for(int j=0; j<seq_length; j++){
       temp_char = seq.seq[j];
-      if(((temp_char=='A') && (consensus[j]!=0)) && (consensus[j]!=4) && (allele_counts[0][j]>1)){
+      if(((temp_char=='A') && (consensus(j)!=0)) && (consensus(j)!=4)){
         m_i.push_back(n);
         m_j.push_back(j);
         m_x.push_back(1);
         n_snps += 1;
-      } else if(((temp_char=='C') && (consensus[j]!=1)) && (consensus[j]!=4) && (allele_counts[1][j]>1)){
+      } else if(((temp_char=='C') && (consensus(j)!=1)) && (consensus(j)!=4)){
         m_i.push_back(n);
         m_j.push_back(j);
         m_x.push_back(2);
         n_snps += 1;
-      } else if(((temp_char=='G') && (consensus[j]!=2)) && (consensus[j]!=4) && (allele_counts[2][j]>1)){
+      } else if(((temp_char=='G') && (consensus(j)!=2)) && (consensus(j)!=4)){
         m_i.push_back(n);
         m_j.push_back(j);
         m_x.push_back(3);
         n_snps += 1;
-      } else if(((temp_char=='T') && (consensus[j]!=3)) && (consensus[j]!=4) && (allele_counts[3][j]>1)){
+      } else if(((temp_char=='T') && (consensus(j)!=3)) && (consensus(j)!=4)){
         m_i.push_back(n);
         m_j.push_back(j);
         m_x.push_back(4);
