@@ -9,6 +9,7 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List import_fasta_to_vector_each_nt(std::string file) {
+
   //Initially run through fasta to get consensus sequence and dimensions of matrix
   int n = 0;
   int l = 0;
@@ -85,7 +86,6 @@ List import_fasta_to_vector_each_nt(std::string file) {
       m_j.reserve( 2*m_j.capacity() );
       m_x.reserve( 2*m_x.capacity() );
     }
-
     for(int j=0; j<seq_length; j++){
       temp_char = seq.seq[j];
       if((((temp_char=='A') || (temp_char=='a')) && (consensus[j]!=0))){

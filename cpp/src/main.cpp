@@ -129,36 +129,34 @@ int main(int argc, char *argv[])
   int n_snps = 0;
   n=0;
 
-  
   while((l = ks2.read(seq)) >= 0) {
     // Record sequence names
     seq_names[n] = seq.name;
-    if ((m_i.capacity() - n_snps)<100){
+
+    if ((m_i.capacity() - 2*n_snps)<100){
       // Reserve memory
-      cout << "resizing!" << endl;
       m_i.reserve( 2*m_i.capacity() );
       m_j.reserve( 2*m_j.capacity() );
       m_x.reserve( 2*m_x.capacity() );
     }
-
     for(int j=0; j<seq_length; j++){
       temp_char = seq.seq[j];
-      if(((temp_char=='A') && (consensus(j)!=0)) && (consensus(j)!=4)){
+      if((((temp_char=='A') || (temp_char=='a')) && (consensus(j)!=0))){
         m_i.push_back(n);
         m_j.push_back(j);
         m_x.push_back(1);
         n_snps += 1;
-      } else if(((temp_char=='C') && (consensus(j)!=1)) && (consensus(j)!=4)){
+      } else if((((temp_char=='C') || (temp_char=='c')) && (consensus(j)!=1))){
         m_i.push_back(n);
         m_j.push_back(j);
         m_x.push_back(2);
         n_snps += 1;
-      } else if(((temp_char=='G') && (consensus(j)!=2)) && (consensus(j)!=4)){
+      } else if((((temp_char=='G') || (temp_char=='g')) && (consensus(j)!=2))){
         m_i.push_back(n);
         m_j.push_back(j);
         m_x.push_back(3);
         n_snps += 1;
-      } else if(((temp_char=='T') && (consensus(j)!=3)) && (consensus(j)!=4)){
+      } else if((((temp_char=='T') || (temp_char=='t')) && (consensus(j)!=3))){
         m_i.push_back(n);
         m_j.push_back(j);
         m_x.push_back(4);
@@ -173,26 +171,27 @@ int main(int argc, char *argv[])
   uvec m_i_vec = uvec(m_i);
   uvec m_j_vec = uvec(m_j);
 
+
   uvec idsA = find(m_x_vec == 1); // Find indices
   umat locations(2, idsA.size());
   locations.row(0) = m_i_vec.elem(idsA).t();
   locations.row(1) = m_j_vec.elem(idsA).t();
 
-  sp_umat sparse_matrix_A(locations, m_x_vec.ones().elem(idsA).t(), n_seqs, seq_length);
+  sp_umat sparse_matrix_A(locations, ones<uvec>(idsA.size()), n_seqs, seq_length);
 
   uvec idsC = find(m_x_vec == 2); // Find indices
   locations.set_size(2, idsC.size());
   locations.row(0) = m_i_vec.elem(idsC).t();
   locations.row(1) = m_j_vec.elem(idsC).t();
 
-  sp_umat sparse_matrix_C(locations, m_x_vec.ones().elem(idsC).t(), n_seqs, seq_length);
+  sp_umat sparse_matrix_C(locations, ones<uvec>(idsC.size()), n_seqs, seq_length);
 
   uvec idsG = find(m_x_vec == 3); // Find indices
   locations.set_size(2, idsG.size());
   locations.row(0) = m_i_vec.elem(idsG).t();
   locations.row(1) = m_j_vec.elem(idsG).t();
 
-  sp_umat sparse_matrix_G(locations, m_x_vec.ones().elem(idsG).t(), n_seqs, seq_length);
+  sp_umat sparse_matrix_G(locations, ones<uvec>(idsG.size()), n_seqs, seq_length);
 
 
   uvec idsT = find(m_x_vec == 4); // Find indices
@@ -200,7 +199,7 @@ int main(int argc, char *argv[])
   locations.row(0) = m_i_vec.elem(idsT).t();
   locations.row(1) = m_j_vec.elem(idsT).t();
 
-  sp_umat sparse_matrix_T(locations, m_x_vec.ones().elem(idsT).t(), n_seqs, seq_length);
+  sp_umat sparse_matrix_T(locations, ones<uvec>(idsT.size()), n_seqs, seq_length);
 
 
   umat comp_snps = umat(sparse_matrix_A * sparse_matrix_A.t());
