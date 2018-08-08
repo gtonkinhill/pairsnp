@@ -5,6 +5,7 @@
 #' @import Matrix
 #'
 #' @param sparse.data a sparse SNP data object returned from import_fasta_sparse
+#' @param compare.n whether to count comparisons with gaps in distance calculation
 #'
 #' @return A pairwise snp distance matrix
 #'
@@ -14,12 +15,13 @@
 #' snp_dist(sparse.data)
 #'
 #' @export
-snp_dist <- function(sparse.data){
+snp_dist <- function(sparse.data, compare.n=FALSE){
 
   # Check inputs
   if(!is.list(sparse.data)) stop("Invalid value for sparse.data! Did you use the import_fasta_sparse_nt function?")
   if(!(class(sparse.data$snp.matrix)=="dgCMatrix")) stop("Invalid value for sparse.data! Did you use the import_fasta_sparse_nt function?")
   if(!is.numeric(sparse.data$consensus)) stop("Invalid value for sparse.data! Did you use the import_fasta_sparse_nt function?")
+  if(!is.logical(compare.n)) stop("compare.n must be TRUE/FALSE")
 
   n.isolates <- ncol(sparse.data$snp.matrix)
 
@@ -27,12 +29,27 @@ snp_dist <- function(sparse.data){
   shared.snps <- shared.snps + as.matrix(tcrossprod(t(sparse.data$snp.matrix==2)))
   shared.snps <- shared.snps + as.matrix(tcrossprod(t(sparse.data$snp.matrix==3)))
   shared.snps <- shared.snps + as.matrix(tcrossprod(t(sparse.data$snp.matrix==4)))
+  shared.snps <- shared.snps + as.matrix(tcrossprod(t(sparse.data$snp.matrix==5)))
 
   total.snps <- colSums(sparse.data$snp.matrix>0)
-  differing.snps <- (matrix(rep(total.snps, n.isolates), nrow = n.isolates, byrow = TRUE) +
-                       matrix(rep(total.snps, n.isolates), nrow = n.isolates, byrow = FALSE) -
-                       as.matrix(tcrossprod(t(sparse.data$snp.matrix>0))) -
-                       shared.snps)
+
+  if(compare.n){
+    differing.snps <- (matrix(rep(total.snps, n.isolates), nrow = n.isolates, byrow = TRUE) +
+                         matrix(rep(total.snps, n.isolates), nrow = n.isolates, byrow = FALSE) -
+                         as.matrix(tcrossprod(t(sparse.data$snp.matrix>0))) -
+                         shared.snps)
+  } else {
+    total.n <- colSums(sparse.data$snp.matrix==5)
+    diff.n <- as.matrix(tcrossprod(t(sparse.data$snp.matrix==5)))
+    diff.n <- (matrix(rep(total.n, n.isolates), nrow = n.isolates, byrow = TRUE) +
+                 matrix(rep(total.n, n.isolates), nrow = n.isolates, byrow = FALSE) -
+                 2*diff.n)
+    differing.snps <- (matrix(rep(total.snps, n.isolates), nrow = n.isolates, byrow = TRUE) +
+                         matrix(rep(total.snps, n.isolates), nrow = n.isolates, byrow = FALSE) -
+                         as.matrix(tcrossprod(t(sparse.data$snp.matrix>0))) -
+                         shared.snps -
+                         diff.n)
+  }
 
   return(differing.snps)
 }

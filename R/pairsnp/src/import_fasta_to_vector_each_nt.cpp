@@ -53,7 +53,7 @@ List import_fasta_to_vector_each_nt(std::string file) {
   int max_allele = -1;
 
   for(int j=0; j<seq_length; j++){
-    for(int i=0; i<5; i++){
+    for(int i=0; i<4; i++){
       if(allele_counts[i][j]>max_allele){
         max_allele = allele_counts[i][j];
         consensus(j) = i;
@@ -76,6 +76,8 @@ List import_fasta_to_vector_each_nt(std::string file) {
   char temp_char;
   int n_snps = 0;
   n=1;
+  std::string nt ("AaCcGgTt");
+
   while((l = ks2.read(seq)) >= 0) {
     // Record sequence names
     seq_names[n-1] = seq.name;
@@ -107,6 +109,11 @@ List import_fasta_to_vector_each_nt(std::string file) {
         m_i.push_back(n);
         m_j.push_back(j+1);
         m_x.push_back(4);
+        n_snps += 1;
+      } else if((nt.find(temp_char) == std::string::npos && (consensus(j)!=4))){
+        m_i.push_back(n);
+        m_j.push_back(j+1);
+        m_x.push_back(5);
         n_snps += 1;
       }
     }

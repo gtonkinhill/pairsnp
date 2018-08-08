@@ -61,6 +61,7 @@ def calculate_snp_matrix(align_length, consensus, fastafile, nseqs):
     with open(fastafile) as fasta:
         for h,s in read_fasta(fasta):
             s = np.fromstring(s.lower(), dtype=np.int8)
+            s[(s!=97) & (s!=99) & (s!=103) & (s!=116)] = 110
             snps = consensus!=s
             right = n_snps + np.sum(snps)
 
@@ -90,8 +91,11 @@ def main():
 
     parser = argparse.ArgumentParser(description='Program to calculate pairwise SNP distance and similarity matrices.')
 
-    parser.add_argument('-t', '--type', dest='type', type=str, choices=["sim", "dist"],
-                       help='either sim (similarity) or dist (distance).')
+    parser.add_argument('-t', '--type', dest='type', type=str, choices=["sim", "dist"], default="dist",
+                       help='either sim (similarity) or dist (distance) (default).')
+
+    parser.add_argument('-n', '--inc_n', dest='inc_n', action='store_true',
+                       help='flag to indicate differences to gaps should be counted.')
 
     parser.add_argument('-f', '--file', dest='filename', required=True,
                        type=str,
@@ -106,9 +110,7 @@ def main():
     seq_names, align_length, consensus = calculate_consensus(args.filename)
 
     sparse_matrix = calculate_snp_matrix(align_length, consensus, args.filename, len(seq_names))
-
-    print(np.sum(1*(sparse_matrix[2,].todense()>0)))
-
+ 
     d = (1*(sparse_matrix==97)) * (sparse_matrix.transpose()==97)
     d = d + (1*(sparse_matrix==99) * (sparse_matrix.transpose()==99))
     d = d + (1*(sparse_matrix==103) * (sparse_matrix.transpose()==103))
@@ -116,12 +118,23 @@ def main():
 
     d = d.todense()
 
-    if(args.type!="sim"):
+    if(args.type=="dist"):
+        n_comp = (1*(sparse_matrix==110) * (sparse_matrix.transpose()==110)).todense()
+        d = d + n_comp
         temp_total = np.zeros((len(seq_names), len(seq_names)))
         seq_sum = (1*(sparse_matrix>0)).sum(1)
         temp_total[:] = seq_sum
         total_differences_shared = (1*(sparse_matrix>0)) * (sparse_matrix.transpose()>0)
-        d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d
+
+        if args.inc_n:
+            d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d
+        else:
+            n_total = np.zeros((len(seq_names), len(seq_names)))
+            n_sum = (1*(sparse_matrix==110)).sum(1)
+            n_total[:] = n_sum
+            diff_n = n_total + np.transpose(n_total) - 2*n_comp
+            d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d - diff_n
+
     
     with open(args.output, 'w') as outfile:
         np.savetxt(outfile, d, fmt="%d", delimiter=",", 
