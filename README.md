@@ -33,7 +33,7 @@ python ../pairsnp.py -h
 
 ### c++
 
-The c++ code relies on a recent version of Armdillo and can be built by running
+The c++ code relies on a recent version of Armadillo and can be built by running
 
 ```
 cd ./pairsnp/cpp/
