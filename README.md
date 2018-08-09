@@ -16,5 +16,29 @@ devtools::install_github("gtonkinhill/pairsnp", subdir = "R/pairsnp")
 
 ### python
 
+At the moment the python library is not set up to work as a package but I'm planning on doing this at some point along with transferring it to python3.
+
+It relies on scipy and numpy
+
+```
+pip install scipy
+pip install numpy
+```
+
+After these are installed the script can simply be called by
+
+```
+python ../pairsnp.py -h
+```
+
 ### c++
+
+The c++ code relies on a recent version of Armdillo and can be built by running
+
+```
+cd ./pairsnp/cpp/
+./configure
+make
+make install
+```
 
