@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
   int max_allele = -1;
 
   for(int j=0; j<seq_length; j++){
-    for(int i=0; i<4; i++){
+    for(int i=0; i<5; i++){
       if(allele_counts[i][j]>max_allele){
         max_allele = allele_counts[i][j];
         consensus(j) = i;
@@ -219,8 +219,9 @@ int main(int argc, char *argv[])
   
 
   if(dist){
-    comp_snps = comp_snps + umat(sparse_matrix_N * sparse_matrix_N.t());
-    
+    umat diff_n = umat(sparse_matrix_N * sparse_matrix_N.t());
+    comp_snps = comp_snps + diff_n;
+
     sp_umat total_snps = sum(sparse_matrix_A + sparse_matrix_C + sparse_matrix_G + sparse_matrix_T + sparse_matrix_N, 1);
 
     umat differing_snps = umat(n_seqs, n_seqs);
@@ -235,11 +236,23 @@ int main(int argc, char *argv[])
       comp_snps = differing_snps - umat(binary_snps * binary_snps.t()) - comp_snps;
     } else {
       sp_umat total_n = sum(sparse_matrix_N, 1);
-      umat diff_n = umat(sparse_matrix_N * sparse_matrix_N.t());
+
+      uvec cons_idsN = find(consensus == 4); // Find indices
+
+      umat matrix_n_cols = zeros<umat>(n_seqs, cons_idsN.size());
+      for (int i=0; i<cons_idsN.size(); i++){
+        sp_umat col(binary_snps.col(cons_idsN(i)));
+        for (arma::sp_umat::iterator it = col.begin(); it != col.end(); ++it) {
+         matrix_n_cols(it.row(), i) = 1;
+        }
+      }
+
+      umat  cons_snps_N = matrix_n_cols * matrix_n_cols.t();
+      uvec tot_cons_snps_N = uvec(sum(matrix_n_cols, 1));
 
       for (int i=0 ; i<n_seqs; i++){
         for(int j=0; j<n_seqs; j++){
-          diff_n(i,j) = total_n(i) + total_n(j) - 2*diff_n(i,j);
+          diff_n(i,j) = total_n(i) + total_n(j) - 2*diff_n(i,j) + tot_cons_snps_N(i) + tot_cons_snps_N(j) - 2*cons_snps_N(i,j);
         }
       }
       

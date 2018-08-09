@@ -40,10 +40,19 @@ snp_dist <- function(sparse.data, compare.n=FALSE){
                          shared.snps)
   } else {
     total.n <- colSums(sparse.data$snp.matrix==5)
+
+    n.cols.submatrix <- 1*(sparse.data$snp.matrix>0)[sparse.data$consensus==4,]
+    cons.snps.N <- as.matrix(tcrossprod(t(n.cols.submatrix)))
+    tot.cons.snps.N <- colSums(n.cols.submatrix)
+    tot.cons.snps.N <- (matrix(rep(tot.cons.snps.N, n.isolates), nrow = n.isolates, byrow = TRUE) +
+                           matrix(rep(tot.cons.snps.N, n.isolates), nrow = n.isolates, byrow = FALSE))
+
     diff.n <- as.matrix(tcrossprod(t(sparse.data$snp.matrix==5)))
     diff.n <- (matrix(rep(total.n, n.isolates), nrow = n.isolates, byrow = TRUE) +
                  matrix(rep(total.n, n.isolates), nrow = n.isolates, byrow = FALSE) -
-                 2*diff.n)
+                 2*diff.n +
+                 tot.cons.snps.N -
+                 2*cons.snps.N)
     differing.snps <- (matrix(rep(total.snps, n.isolates), nrow = n.isolates, byrow = TRUE) +
                          matrix(rep(total.snps, n.isolates), nrow = n.isolates, byrow = FALSE) -
                          as.matrix(tcrossprod(t(sparse.data$snp.matrix>0))) -

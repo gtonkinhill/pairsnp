@@ -53,7 +53,7 @@ List import_fasta_to_vector_each_nt(std::string file) {
   int max_allele = -1;
 
   for(int j=0; j<seq_length; j++){
-    for(int i=0; i<4; i++){
+    for(int i=0; i<5; i++){
       if(allele_counts[i][j]>max_allele){
         max_allele = allele_counts[i][j];
         consensus(j) = i;

@@ -27,24 +27,28 @@ def calculate_consensus(fastafile):
         h,s = fasta_gen.next()
         seq_names.append(h)
         s = np.fromstring(s.lower(), dtype=np.int8)
+        s[(s!=97) & (s!=99) & (s!=103) & (s!=116)] = 110
         align_length = len(s)
-        count_matrix = np.zeros((4,align_length))
+        count_matrix = np.zeros((5,align_length))
 
         count_matrix[0,] = count_matrix[0,] + (s==97)
         count_matrix[1,] = count_matrix[1,] + (s==99)
         count_matrix[2,] = count_matrix[2,] + (s==103)
         count_matrix[3,] = count_matrix[3,] + (s==116)
+        count_matrix[4,] = count_matrix[4,] + (s==110)
 
         for h,s in fasta_gen:
             seq_names.append(h)
             s = np.fromstring(s.lower(), dtype=np.int8)
+            s[(s!=97) & (s!=99) & (s!=103) & (s!=116)] = 110
             count_matrix[0,] = count_matrix[0,] + (s==97)
             count_matrix[1,] = count_matrix[1,] + (s==99)
             count_matrix[2,] = count_matrix[2,] + (s==103)
             count_matrix[3,] = count_matrix[3,] + (s==116)
+            count_matrix[4,] = count_matrix[4,] + (s==110)
             
 
-        consensus =  np.array([97,99,103,116])[np.argmax(count_matrix, axis=0)]
+        consensus =  np.array([97,99,103,116,110])[np.argmax(count_matrix, axis=0)]
 
     return seq_names, align_length, consensus
 
@@ -119,7 +123,8 @@ def main():
     d = d.todense()
 
     if(args.type=="dist"):
-        n_comp = (1*(sparse_matrix==110) * (sparse_matrix.transpose()==110)).todense()
+        temp_sparse_n = sparse_matrix==110
+        n_comp = (1*temp_sparse_n * (temp_sparse_n.transpose())).todense()
         d = d + n_comp
         temp_total = np.zeros((len(seq_names), len(seq_names)))
         seq_sum = (1*(sparse_matrix>0)).sum(1)
@@ -130,9 +135,20 @@ def main():
             d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d
         else:
             n_total = np.zeros((len(seq_names), len(seq_names)))
-            n_sum = (1*(sparse_matrix==110)).sum(1)
+            n_sum = (1*temp_sparse_n).sum(1)
             n_total[:] = n_sum
-            diff_n = n_total + np.transpose(n_total) - 2*n_comp
+            
+            if(sum(consensus==110)<=0):
+                tot_cons_snps_N = cons_snps_N = 0
+            else:
+                matrix_n_cols = 1*(sparse_matrix>0)[:,consensus==110]
+                cons_snps_N = matrix_n_cols * np.transpose(matrix_n_cols)
+
+                tot_cons_snps_N = np.zeros((len(seq_names), len(seq_names)))
+                tot_cons_snps_N_sum = matrix_n_cols.sum(1)
+                tot_cons_snps_N[:] = tot_cons_snps_N_sum
+            
+            diff_n = n_total + np.transpose(n_total) - 2*n_comp + tot_cons_snps_N + np.transpose(tot_cons_snps_N) - 2*cons_snps_N
             d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d - diff_n
 
     
