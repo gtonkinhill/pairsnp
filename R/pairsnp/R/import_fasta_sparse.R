@@ -17,8 +17,6 @@ import_fasta_sparse <- function(fasta.file.name){
 
   # Check inputs
   if(!file.exists(fasta.file.name)) stop(paste("Can't locate file", fasta.file.name))
-  # Cheat a bit by checking the file using ape
-  invisible(capture.output(ape::read.FASTA(fasta.file.name, type = "DNA")))
 
   snp.data <- pairsnp:::import_fasta_to_vector_each_nt(fasta.file.name)
   snp.data$seq.names <-  gsub("^>","",snp.data$seq.names)
