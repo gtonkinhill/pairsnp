@@ -9,7 +9,10 @@ In order to be most useful implementations in R, python and c++ are available.
 ## Installation
 
 ### R
-
+```
+#install.packages("devtools")
+devtools::install_github("gtonkinhill/pairsnp", subdir = "R/pairsnp")
+```
 
 ### python
 
