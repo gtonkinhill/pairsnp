@@ -211,7 +211,6 @@ int main(int argc, char *argv[])
   comp_snps = comp_snps + umat(sparse_matrix_G * sparse_matrix_G.t());
   comp_snps = comp_snps + umat(sparse_matrix_T * sparse_matrix_T.t());
   
-
   if(dist){
     umat diff_n = umat(sparse_matrix_N * sparse_matrix_N.t());
     comp_snps = comp_snps + diff_n;
@@ -265,9 +264,7 @@ int main(int argc, char *argv[])
     printf("\n");
   }
 
-
   return 0;
-
 
   }
 
