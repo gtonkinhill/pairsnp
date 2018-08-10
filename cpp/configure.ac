@@ -1,7 +1,8 @@
-AC_INIT([amhello], [1.0], [bug-automake@gnu.org])
+AC_INIT([pairsnp], [0.0.1], [g.tonkinhill@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_PROG_CC
 AC_PROG_CXX
+
 
 # Armadillo 
 AC_LANG_PUSH([C++])

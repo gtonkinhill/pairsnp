@@ -174,10 +174,9 @@ int main(int argc, char *argv[])
     n += 1;
   }
 
-  
-  uvec m_x_vec = uvec(m_x);
-  uvec m_i_vec = uvec(m_i);
-  uvec m_j_vec = uvec(m_j);
+  uvec m_x_vec = conv_to< uvec >::from(m_x);
+  uvec m_i_vec = conv_to< uvec >::from(m_i);
+  uvec m_j_vec = conv_to< uvec >::from(m_j);
 
 
   uvec idsA = find(m_x_vec == 1); // Find indices
