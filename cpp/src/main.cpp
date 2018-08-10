@@ -131,6 +131,11 @@ int main(int argc, char *argv[])
 
   while((l = ks2.read(seq)) >= 0) {
     // Record sequence names
+    auto it = std::find(seq.name.begin(), seq.name.end(), '>');
+    if (it != seq.name.end()){
+      seq.name.erase(it);
+    }
+
     seq_names.push_back(seq.name);
 
     if ((m_i.capacity() - 2*n_snps)<100){
