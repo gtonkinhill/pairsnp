@@ -78,8 +78,6 @@ int main(int argc, char *argv[])
 
 
   while((l = ks.read(seq)) >= 0) {
-    // std::cout << seq.name << std::endl;
-    // std::cout << seq.seq << std::endl;
     for(int j=0; j<seq_length; j++){
       if((seq.seq[j]=='a') || (seq.seq[j]=='A')){
         allele_counts[0][j] += 1;
@@ -97,11 +95,10 @@ int main(int argc, char *argv[])
   }
   close(fp);
 
-
   // Now calculate the consensus sequence
   uvec consensus(seq_length);
   int n_seqs = n+1;
-  std::string seq_names[n_seqs];
+  std::vector<std::string> seq_names;
 
   int max_allele = -1;
 
@@ -134,7 +131,7 @@ int main(int argc, char *argv[])
 
   while((l = ks2.read(seq)) >= 0) {
     // Record sequence names
-    seq_names[n] = seq.name;
+    seq_names.push_back(seq.name);
 
     if ((m_i.capacity() - 2*n_snps)<100){
       // Reserve memory
@@ -197,7 +194,6 @@ int main(int argc, char *argv[])
   locations.row(1) = m_j_vec.elem(idsG).t();
   sp_umat sparse_matrix_G(locations, ones<uvec>(idsG.size()), n_seqs, seq_length);
 
-
   uvec idsT = find(m_x_vec == 4); // Find indices
   locations.set_size(2, idsT.size());
   locations.row(0) = m_i_vec.elem(idsT).t();
@@ -209,7 +205,6 @@ int main(int argc, char *argv[])
   locations.row(0) = m_i_vec.elem(idsN).t();
   locations.row(1) = m_j_vec.elem(idsN).t();
   sp_umat sparse_matrix_N(locations, ones<uvec>(idsN.size()), n_seqs, seq_length);
-
 
   umat comp_snps = umat(sparse_matrix_A * sparse_matrix_A.t());
   comp_snps = comp_snps + umat(sparse_matrix_C * sparse_matrix_C.t());

@@ -4109,6 +4109,7 @@ fi
 
 
 
+
 # Armadillo 
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'

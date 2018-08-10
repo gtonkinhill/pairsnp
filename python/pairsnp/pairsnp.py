@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 from scipy import sparse
 
-INITIALISATION_LENGTH = 1e5
+INITIALISATION_LENGTH = 100000
 
 # This function was taken from https://stackoverflow.com/questions/7654971/parsing-a-fasta-file-using-a-generator-python
 def read_fasta(fp):
