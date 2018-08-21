@@ -76,7 +76,6 @@ int main(int argc, char *argv[])
   int allele_counts[5][seq_length];
   memset(allele_counts, 0, 5*seq_length*sizeof(int));
 
-
   while((l = ks.read(seq)) >= 0) {
     for(int j=0; j<seq_length; j++){
       if((seq.seq[j]=='a') || (seq.seq[j]=='A')){
@@ -119,7 +118,6 @@ int main(int argc, char *argv[])
   m_i.reserve(50000);
   m_j.reserve(50000);
   m_x.reserve(50000);
-
 
   // open a new stream to the fasta file TODO: I think there's a cleaner way of doing this.
   int fp2 = open(fasta, O_RDONLY);
@@ -256,9 +254,7 @@ int main(int argc, char *argv[])
       
       comp_snps = differing_snps - umat(binary_snps * binary_snps.t()) - comp_snps - diff_n;
     }
-    
   }
-
 
   // Output the distance matrix to stdout
   for (int j=0; j < n_seqs; j++) {
