@@ -53,12 +53,14 @@ def calculate_consensus(fastafile):
     return seq_names, align_length, consensus
 
 
-def calculate_snp_matrix(align_length, consensus, fastafile, nseqs):
-    print "Generating SNP matrix... "
+def calculate_snp_matrix(fastafile):
+    seq_names, align_length, consensus = calculate_consensus(fastafile)
+    nseqs = len(seq_names)
+
     row = np.empty(INITIALISATION_LENGTH)
     col = np.empty(INITIALISATION_LENGTH, dtype=np.int64)
     val = np.empty(INITIALISATION_LENGTH, dtype=np.int8)
-    print "Allocated memory"
+
     r = 0
     n_snps = 0
     current_length = INITIALISATION_LENGTH
@@ -87,9 +89,49 @@ def calculate_snp_matrix(align_length, consensus, fastafile, nseqs):
 
     sparse_snps = sparse.csc_matrix((val, (row, col)), shape=(nseqs, align_length))
 
-    return sparse_snps
+    return sparse_snps, consensus, seq_names
 
+def calculate_distance_matrix(sparse_matrix, consensus, type, inc_n):
 
+    n_seqs = sparse_matrix.shape[0]
+
+    d = (1*(sparse_matrix==97)) * (sparse_matrix.transpose()==97)
+    d = d + (1*(sparse_matrix==99) * (sparse_matrix.transpose()==99))
+    d = d + (1*(sparse_matrix==103) * (sparse_matrix.transpose()==103))
+    d = d + (1*(sparse_matrix==116) * (sparse_matrix.transpose()==116))
+
+    d = d.todense()
+
+    if(type=="dist"):
+        temp_sparse_n = sparse_matrix==110
+        n_comp = (1*temp_sparse_n * (temp_sparse_n.transpose())).todense()
+        d = d + n_comp
+        temp_total = np.zeros((n_seqs, n_seqs))
+        seq_sum = (1*(sparse_matrix>0)).sum(1)
+        temp_total[:] = seq_sum
+        total_differences_shared = (1*(sparse_matrix>0)) * (sparse_matrix.transpose()>0)
+
+        if inc_n:
+            d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d
+        else:
+            n_total = np.zeros((n_seqs, n_seqs))
+            n_sum = (1*temp_sparse_n).sum(1)
+            n_total[:] = n_sum
+            
+            if(sum(consensus==110)<=0):
+                tot_cons_snps_N = cons_snps_N = 0
+            else:
+                matrix_n_cols = 1*(sparse_matrix>0)[:,consensus==110]
+                cons_snps_N = matrix_n_cols * np.transpose(matrix_n_cols)
+
+                tot_cons_snps_N = np.zeros((n_seqs, n_seqs))
+                tot_cons_snps_N_sum = matrix_n_cols.sum(1)
+                tot_cons_snps_N[:] = tot_cons_snps_N_sum
+            
+            diff_n = n_total + np.transpose(n_total) - 2*n_comp + tot_cons_snps_N + np.transpose(tot_cons_snps_N) - 2*cons_snps_N
+            d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d - diff_n
+
+    return d
 
 def main():
 
@@ -111,47 +153,10 @@ def main():
 
     args = parser.parse_args()
 
-    seq_names, align_length, consensus = calculate_consensus(args.filename)
-
-    sparse_matrix = calculate_snp_matrix(align_length, consensus, args.filename, len(seq_names))
+    sparse_matrix, consensus, seq_names = calculate_snp_matrix(args.filename)
  
-    d = (1*(sparse_matrix==97)) * (sparse_matrix.transpose()==97)
-    d = d + (1*(sparse_matrix==99) * (sparse_matrix.transpose()==99))
-    d = d + (1*(sparse_matrix==103) * (sparse_matrix.transpose()==103))
-    d = d + (1*(sparse_matrix==116) * (sparse_matrix.transpose()==116))
+    d = calculate_distance_matrix(sparse_matrix, consensus, args.type, args.inc_n)
 
-    d = d.todense()
-
-    if(args.type=="dist"):
-        temp_sparse_n = sparse_matrix==110
-        n_comp = (1*temp_sparse_n * (temp_sparse_n.transpose())).todense()
-        d = d + n_comp
-        temp_total = np.zeros((len(seq_names), len(seq_names)))
-        seq_sum = (1*(sparse_matrix>0)).sum(1)
-        temp_total[:] = seq_sum
-        total_differences_shared = (1*(sparse_matrix>0)) * (sparse_matrix.transpose()>0)
-
-        if args.inc_n:
-            d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d
-        else:
-            n_total = np.zeros((len(seq_names), len(seq_names)))
-            n_sum = (1*temp_sparse_n).sum(1)
-            n_total[:] = n_sum
-            
-            if(sum(consensus==110)<=0):
-                tot_cons_snps_N = cons_snps_N = 0
-            else:
-                matrix_n_cols = 1*(sparse_matrix>0)[:,consensus==110]
-                cons_snps_N = matrix_n_cols * np.transpose(matrix_n_cols)
-
-                tot_cons_snps_N = np.zeros((len(seq_names), len(seq_names)))
-                tot_cons_snps_N_sum = matrix_n_cols.sum(1)
-                tot_cons_snps_N[:] = tot_cons_snps_N_sum
-            
-            diff_n = n_total + np.transpose(n_total) - 2*n_comp + tot_cons_snps_N + np.transpose(tot_cons_snps_N) - 2*cons_snps_N
-            d = temp_total + np.transpose(temp_total) - total_differences_shared.todense() - d - diff_n
-
-    
     with open(args.output, 'w') as outfile:
         np.savetxt(outfile, d, fmt="%d", delimiter=",", 
             header=",".join(seq_names))
