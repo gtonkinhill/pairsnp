@@ -1,0 +1,19 @@
+cache: packages
+
+warnings_are_errors: false
+
+sudo: required
+
+before_install: sudo apt-get install libgmp3-dev
+
+matrix:
+  include:
+    - language: r
+    before_script:
+      - cd backend/tests
+
+
+
+
+notifications:
+    slack: pathogens:8NUkMUXlMNecj9NXnwTKbBQU
