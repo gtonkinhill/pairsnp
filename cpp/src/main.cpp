@@ -6,11 +6,14 @@
 #include <armadillo>
 #include "kseq.h"
 
+
+#include <time.h>
+#include <ctime>
+
 #define VERSION "0.0.1"
 #define EXENAME "pairsnp"
 
 using namespace arma;
-
 
 void show_help(int retcode)
 {
@@ -27,9 +30,10 @@ void show_help(int retcode)
   exit(retcode);
 }
 
-
 int main(int argc, char *argv[])
 {
+  // clock_t begin_time = clock();
+
   // parse command line parameters
   int opt, quiet=0, csv=0, corner=1, allchars=0, keepcase=0, dist=1, count_n=0;
   while ((opt = getopt(argc, argv, "hqsncv")) != -1) {
@@ -63,6 +67,10 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
+  
+  // cout << "warmup. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+  // begin_time = clock();
+
   //Initially run through fasta to get consensus sequence and dimensions of matrix
   int n = 0;
   int l = 0;
@@ -94,6 +102,10 @@ int main(int argc, char *argv[])
   }
   close(fp);
 
+  
+  // cout << "initial read.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+  // begin_time = clock();
+
   // Now calculate the consensus sequence
   uvec consensus(seq_length);
   int n_seqs = n+1;
@@ -110,6 +122,10 @@ int main(int argc, char *argv[])
     }
     max_allele = -1;
   }
+
+  
+  // cout << "consensus calc.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+  // begin_time = clock();
 
   // create matrix to store snp locations
   std::vector<uint> m_i;
@@ -174,9 +190,17 @@ int main(int argc, char *argv[])
     n += 1;
   }
 
+  
+  // cout << "loading snp vecs.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+  // begin_time = clock();
+
   uvec m_x_vec = conv_to< uvec >::from(m_x);
   uvec m_i_vec = conv_to< uvec >::from(m_i);
   uvec m_j_vec = conv_to< uvec >::from(m_j);
+
+  
+  // cout << "convert to uvec.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+  // begin_time = clock();
 
 
   uvec idsA = find(m_x_vec == 1); // Find indices
@@ -209,10 +233,16 @@ int main(int argc, char *argv[])
   locations.row(1) = m_j_vec.elem(idsN).t();
   sp_umat sparse_matrix_N(locations, ones<uvec>(idsN.size()), n_seqs, seq_length);
 
+  // cout << "convert to sparse.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+  // begin_time = clock();
+
   umat comp_snps = umat(sparse_matrix_A * sparse_matrix_A.t());
   comp_snps = comp_snps + umat(sparse_matrix_C * sparse_matrix_C.t());
   comp_snps = comp_snps + umat(sparse_matrix_G * sparse_matrix_G.t());
   comp_snps = comp_snps + umat(sparse_matrix_T * sparse_matrix_T.t());
+
+  // cout << "calc similarity matrix.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+  // begin_time = clock();
   
   if(dist){
     umat diff_n = umat(sparse_matrix_N * sparse_matrix_N.t());
@@ -231,7 +261,7 @@ int main(int argc, char *argv[])
     if(count_n){
       comp_snps = differing_snps - umat(binary_snps * binary_snps.t()) - comp_snps;
     } else {
-      sp_umat total_n = sum(sparse_matrix_N, 1);
+      umat total_n = umat(sum(sparse_matrix_N, 1));
 
       uvec cons_idsN = find(consensus == 4); // Find indices
 
@@ -243,6 +273,9 @@ int main(int argc, char *argv[])
         }
       }
 
+      // cout << "up to n matrix conversion.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+      // begin_time = clock();
+
       umat  cons_snps_N = matrix_n_cols * matrix_n_cols.t();
       uvec tot_cons_snps_N = uvec(sum(matrix_n_cols, 1));
 
@@ -251,10 +284,15 @@ int main(int argc, char *argv[])
           diff_n(i,j) = total_n(i) + total_n(j) - 2*diff_n(i,j) + tot_cons_snps_N(i) + tot_cons_snps_N(j) - 2*cons_snps_N(i,j);
         }
       }
+      // cout << "calc diff.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+      // begin_time = clock();
       
       comp_snps = differing_snps - umat(binary_snps * binary_snps.t()) - comp_snps - diff_n;
     }
   }
+  
+  // cout << "calc remaining dist.. " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << endl;
+  // begin_time = clock();
 
   // Output the distance matrix to stdout
   for (int j=0; j < n_seqs; j++) {

@@ -2,7 +2,7 @@ AC_INIT([pairsnp], [0.0.1], [g.tonkinhill@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_PROG_CC
 
-CXXFLAGS="$CXXFLAGS -std=c++0x"
+CXXFLAGS="$CXXFLAGS -std=c++1y -g -O3"
 AC_PROG_CXX
 
 # Armadillo 
