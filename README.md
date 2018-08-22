@@ -35,16 +35,16 @@ python ./setup.py install
 
 The c++ code relies on a recent version of Armadillo (currently tested on v8.6) and can be built by running
 
-The majority of time is spend doing sparse matrix multiplications so linking to a parallelised library for this is likely to improve preformance further.
-
-At the moment there you may need to run `touch ./cpp/*` before compiling to avoid some issues with time stamps.
-
 ```
 cd ./pairsnp/cpp/
 ./configure
 make
 make install
 ```
+
+The majority of time is spend doing sparse matrix multiplications so linking to a parallelised library for this is likely to improve preformance further.
+
+At the moment there you may need to run `touch ./cpp/*` before compiling to avoid some issues with time stamps.
 
 ## Quick Start
 
