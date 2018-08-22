@@ -1,5 +1,9 @@
 # pairsnp
 
+<p align="center">
+<img src="https://cdn.pixabay.com/photo/2017/11/20/19/25/radish-2966491_960_720.jpg" width="330" align="center">
+</p>
+
 A set of scripts for very quickly obtaining pairwise SNP distance matrices from multiple sequence alignments using sparse matrix libraries to improve performance.
 
 For larger alignments such as the Maela pneumococcal data set (3e5 x 3e3) the c++ version is approximately an order of magnitude faster than approaches based on pairwise comparison of every site such as [snp-dists](https://github.com/tseemann/snp-dists) from which the skeleton code for the c++ version was taken.
