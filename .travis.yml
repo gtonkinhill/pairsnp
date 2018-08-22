@@ -10,7 +10,7 @@ matrix:
   include:
     - language: r
     before_script:
-      - cd backend/tests
+      - cd R/
 
 
 
