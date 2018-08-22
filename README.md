@@ -16,19 +16,19 @@ devtools::install_github("gtonkinhill/pairsnp", subdir = "R/pairsnp")
 
 ### python
 
-At the moment the python library is not set up to work as a package but I'm planning on doing this at some point along with transferring it to python3.
+The python version can be installed using `pip` or by downloading the repository and running `setup.py`.
 
-It relies on scipy and numpy
-
-```
-pip install scipy
-pip install numpy
-```
-
-After these are installed the script can simply be called by
+At the moment it is only available in python2 but I'm planning on converting it to python3.
 
 ```
-python ../pairsnp.py -h
+python -m pip install pairsnp
+```
+
+or alternatively download the repository and run
+
+```
+cd ./pairsnp/python/pairsnp
+python ./setup.py install
 ```
 
 ### c++
