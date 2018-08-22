@@ -2,7 +2,7 @@
 
 A set of scripts for very quickly obtaining pairwise SNP distance matrices from multiple sequence alignments using sparse matrix libraries to improve performance.
 
-For larger alignments such as the Maela pneumoccocal dataset (3e5 x 3e3) the c++ version is approximately an order of magnitude faster than approaches based on pairwise comaprison of every site such as [snp-dists](https://github.com/tseemann/snp-dists).
+For larger alignments such as the Maela pneumococcal data set (3e5 x 3e3) the c++ version is approximately an order of magnitude faster than approaches based on pairwise comparison of every site such as [snp-dists](https://github.com/tseemann/snp-dists) from which the skeleton code for the c++ version was taken.
 
 In order to be most useful implementations in R, python and c++ are available.
 
@@ -42,7 +42,7 @@ make
 make install
 ```
 
-The majority of time is spend doing sparse matrix multiplications so linking to a parallelised library for this is likely to improve preformance further.
+The majority of time is spend doing sparse matrix multiplications so linking to a parallelised library for this is likely to improve performance further.
 
 At the moment there you may need to run `touch ./cpp/*` before compiling to avoid some issues with time stamps.
 
