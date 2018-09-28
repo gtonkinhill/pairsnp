@@ -34,7 +34,7 @@ python -m pip install pairsnp
 or alternatively download the [repository](https://github.com/gtonkinhill/pairsnp-python) and run
 
 ```
-cd ./pairsnp/python/pairsnp
+cd ./pairsnp-python/
 python ./setup.py install
 ```
 
@@ -49,7 +49,7 @@ conda install -c gtonkinhill pairsnp
 The c++ code relies on a recent version of Armadillo (currently tested on v8.6) and after downloading the [repository](https://github.com/gtonkinhill/pairsnp-cpp) can be built by running
 
 ```
-cd ./pairsnp/cpp/
+cd ./pairsnp-cpp/
 ./configure
 make
 make install
