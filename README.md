@@ -15,7 +15,7 @@ In order to be most useful implementations in R, python and c++ are available.
 ### R
 ```
 #install.packages("devtools")
-devtools::install_github("gtonkinhill/pairsnp", subdir = "R/pairsnp")
+devtools::install_github("gtonkinhill/pairsnp-r")
 ```
 
 ### python
@@ -48,7 +48,7 @@ make install
 
 The majority of time is spend doing sparse matrix multiplications so linking to a parallelised library for this is likely to improve performance further.
 
-At the moment there you may need to run `touch ./cpp/*` before compiling to avoid some issues with time stamps.
+At the moment there you may need to run `touch ./*` before compiling to avoid some issues with time stamps.
 
 ## Quick Start
 
