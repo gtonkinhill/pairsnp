@@ -12,9 +12,10 @@ In order to be most useful implementations in R, python and c++ are available.
 
 ## Installation
 
+### R
+
 The R version can be installed using devtools or downloaded from its [repository](https://github.com/gtonkinhill/pairsnp-r)
 
-### R
 ```
 #install.packages("devtools")
 devtools::install_github("gtonkinhill/pairsnp-r")
