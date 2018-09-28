@@ -12,6 +12,8 @@ In order to be most useful implementations in R, python and c++ are available.
 
 ## Installation
 
+The R version can be installed using devtools or downloaded from its [repository](https://github.com/gtonkinhill/pairsnp-r)
+
 ### R
 ```
 #install.packages("devtools")
@@ -28,7 +30,7 @@ At the moment it is only available in python2 but I'm planning on converting it 
 python -m pip install pairsnp
 ```
 
-or alternatively download the repository and run
+or alternatively download the [repository](https://github.com/gtonkinhill/pairsnp-python) and run
 
 ```
 cd ./pairsnp/python/pairsnp
@@ -37,7 +39,13 @@ python ./setup.py install
 
 ### c++
 
-The c++ code relies on a recent version of Armadillo (currently tested on v8.6) and can be built by running
+The c++ version can be installed manually or with conda as
+
+```
+conda install -c gtonkinhill pairsnp
+```
+
+The c++ code relies on a recent version of Armadillo (currently tested on v8.6) and after downloading the [repository](https://github.com/gtonkinhill/pairsnp-cpp) can be built by running
 
 ```
 cd ./pairsnp/cpp/
