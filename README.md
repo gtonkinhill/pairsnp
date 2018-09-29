@@ -1,7 +1,7 @@
 # pairsnp
 
 <p align="center">
-<img src="https://cdn.pixabay.com/photo/2017/11/20/19/25/radish-2966491_960_720.jpg" width="330" align="center">
+<img src="pairsnp.png" width="330" align="center">
 </p>
 
 A set of scripts for very quickly obtaining pairwise SNP distance matrices from multiple sequence alignments using sparse matrix libraries to improve performance.
