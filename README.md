@@ -10,6 +10,13 @@ For larger alignments such as the Maela pneumococcal data set (3e5 x 3e3) the c+
 
 In order to be most useful implementations in R, python and c++ are available.
 
+| Implementation        | Travis           |
+| ------------- |:-------------:|
+| [R](https://github.com/gtonkinhill/pairsnp-r)     | [![Travis-CI Build Status](https://travis-ci.org/gtonkinhill/pairsnp-r.svg?branch=master)](https://travis-ci.org/gtonkinhill/pairsnp-r) |
+| [python](https://github.com/gtonkinhill/pairsnp-python)      | [![Travis-CI Build Status](https://travis-ci.com/gtonkinhill/pairsnp-python.svg?branch=master)](https://travis-ci.com/gtonkinhill/pairsnp-python)      |
+| [c++](https://github.com/gtonkinhill/pairsnp-cpp) | [![Travis-CI Build Status](https://travis-ci.com/gtonkinhill/pairsnp-cpp.svg?branch=master)](https://travis-ci.com/gtonkinhill/pairsnp-cpp)   |
+
+
 ## Installation
 
 ### R
@@ -57,7 +64,7 @@ make install
 
 The majority of time is spend doing sparse matrix multiplications so linking to a parallelised library for this is likely to improve performance further.
 
-At the moment there you may need to run `touch ./*` before compiling to avoid some issues with time stamps.
+At the moment you may need to run `touch ./*` before compiling to avoid some issues with time stamps.
 
 ## Quick Start
 
