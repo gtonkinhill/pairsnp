@@ -45,7 +45,7 @@ python ./setup.py install
 
 ### c++
 
-The c++ version can be installed manually or with conda as
+The c++ version can be installed manually, by downloading the binaries in this repository, or with conda as
 
 ```
 conda install -c gtonkinhill pairsnp
