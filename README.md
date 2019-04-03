@@ -32,8 +32,6 @@ devtools::install_github("gtonkinhill/pairsnp-r")
 
 The python version can be installed using `pip` or by downloading the repository and running `setup.py`.
 
-At the moment it is only available in python2 but I'm planning on converting it to python3.
-
 ```
 python -m pip install pairsnp
 ```
@@ -108,6 +106,8 @@ optional arguments:
   -f FILENAME, --file FILENAME
                         location of a multiple sequence alignment. Currently
                         only DNA alignments are supported.
+  -z, --zipped          Alignment is gzipped.
+  -c, --csv             Output csv-delimited table (default tsv).
   -o OUTPUT, --out OUTPUT
                         location of output file.
 ```
