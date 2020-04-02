@@ -48,7 +48,7 @@ python ./setup.py install
 The c++ version can be installed manually, by downloading the binaries in this repository, or with conda as
 
 ```
-conda install -c gtonkinhill pairsnp
+conda install -c bioconda pairsnp
 ```
 
 The c++ code relies on a recent version of Armadillo (currently tested on v8.6) and after downloading the [repository](https://github.com/gtonkinhill/pairsnp-cpp) can be built by running
@@ -130,9 +130,10 @@ USAGE
 OPTIONS
   -h	Show this help
   -v	Print version and exit
-  -s	Find the similarity matrix
+  -s	Output in sparse matrix form (i,j,distance).
+  -d	Distance threshold for sparse output. Only distances <= d will be returned.
   -c	Output CSV instead of TSV
   -n	Count comparisons with Ns (off by default)
-  -b	Blank top left corner cell instead of 'pairsnp 0.0.1'
+  -b	Blank top left corner cell instead of 'pairsnp 0.1.0'
 ```
 
