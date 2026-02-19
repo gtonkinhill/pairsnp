@@ -23,7 +23,7 @@ The c++ version can be installed manually, by downloading the binaries in this r
 conda install -c bioconda pairsnp
 ```
 
-The c++ code relies on a recent version of Armadillo (currently tested on v8.6) and after downloading the [repository](https://github.com/gtonkinhill/pairsnp-cpp) can be built by running
+After downloading the [repository](https://github.com/gtonkinhill/pairsnp-cpp) the c++ version can be built manually by running
 
 ```
 cd ./pairsnp-cpp/
