@@ -6,7 +6,7 @@ For larger alignments such as the Maela pneumococcal data set (3e5 x 3e3) the c+
 
 In order to be most useful implementations in c++, python (now implemented in Tracs) and R are available.
 
-| Implementation        | Travis           |
+| Implementation        | CI           |
 | ------------- |:-------------:|
 | [c++](https://github.com/gtonkinhill/pairsnp-cpp) | [![pairsnp-CI](https://github.com/gtonkinhill/pairsnp-cpp/actions/workflows/pairsnp_test.yml/badge.svg)](https://github.com/gtonkinhill/pairsnp-cpp/actions/workflows/pairsnp_test.yml)   |
 | [python](https://github.com/gtonkinhill/tracs)      | [![tracs-CI](https://github.com/gtonkinhill/tracs/actions/workflows/tracs_test.yml/badge.svg)](https://github.com/gtonkinhill/tracs/actions/workflows/tracs_test.yml)      |
