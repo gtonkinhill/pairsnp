@@ -1,43 +1,19 @@
 # pairsnp
 
-A set of scripts for very quickly obtaining pairwise SNP distance matrices from multiple sequence alignments using sparse matrix libraries to improve performance.
+A set of scripts for very quickly obtaining pairwise SNP distance matrices from multiple sequence alignments using sparse matrix libraries or bitset operations to improve performance.
 
 For larger alignments such as the Maela pneumococcal data set (3e5 x 3e3) the c++ version is approximately an order of magnitude faster than approaches based on pairwise comparison of every site such as [snp-dists](https://github.com/tseemann/snp-dists) from which the skeleton code for the c++ version was taken.
 
-In order to be most useful implementations in R, python and c++ are available.
+In order to be most useful implementations in c++, python (now implemented in Tracs) and R are available.
 
 | Implementation        | Travis           |
 | ------------- |:-------------:|
-| [R](https://github.com/gtonkinhill/pairsnp-r)     | [![Travis-CI Build Status](https://travis-ci.org/gtonkinhill/pairsnp-r.svg?branch=master)](https://travis-ci.org/gtonkinhill/pairsnp-r) |
-| [python](https://github.com/gtonkinhill/pairsnp-python)      | [![Travis-CI Build Status](https://travis-ci.com/gtonkinhill/pairsnp-python.svg?branch=master)](https://travis-ci.com/gtonkinhill/pairsnp-python)      |
-| [c++](https://github.com/gtonkinhill/pairsnp-cpp) | [![Travis-CI Build Status](https://travis-ci.com/gtonkinhill/pairsnp-cpp.svg?branch=master)](https://travis-ci.com/gtonkinhill/pairsnp-cpp)   |
+| [c++](https://github.com/gtonkinhill/pairsnp-cpp) | [![pairsnp-CI](https://github.com/gtonkinhill/pairsnp-cpp/actions/workflows/pairsnp_test.yml/badge.svg)](https://github.com/gtonkinhill/pairsnp-cpp/actions/workflows/pairsnp_test.yml)   |
+| [python](https://github.com/gtonkinhill/tracs)      | [![tracs-CI](https://github.com/gtonkinhill/tracs/actions/workflows/tracs_test.yml/badge.svg)](https://github.com/gtonkinhill/tracs/actions/workflows/tracs_test.yml)      |
+| [R](https://github.com/gtonkinhill/pairsnp-r)     | No longer supported |
 
 
 ## Installation
-
-### R
-
-The R version can be installed using devtools or downloaded from its [repository](https://github.com/gtonkinhill/pairsnp-r)
-
-```
-#install.packages("devtools")
-devtools::install_github("gtonkinhill/pairsnp-r")
-```
-
-### python
-
-The python version can be installed using `pip` or by downloading the repository and running `setup.py`.
-
-```
-python -m pip install pairsnp
-```
-
-or alternatively download the [repository](https://github.com/gtonkinhill/pairsnp-python) and run
-
-```
-cd ./pairsnp-python/
-python ./setup.py install
-```
 
 ### c++
 
@@ -56,57 +32,29 @@ make
 make install
 ```
 
-The majority of time is spend doing sparse matrix multiplications so linking to a parallelised library for this is likely to improve performance further.
+### python
 
-At the moment you may need to run `touch ./*` before compiling to avoid some issues with time stamps.
+The python version is now included in the Tracs pipeline and can be installed using conda or `pip`.
 
-## Quick Start
+```
+conda install bioconda::tracs
+```
+
+```
+pip3 install git+https://github.com/gtonkinhill/tracs
+```
 
 ### R
 
-```
-library(pairsnp)
-fasta.file.name <- system.file("extdata", "seqs.fa", package = "pairsnp")
-sparse.data <- import_fasta_sparse(fasta.file.name)
-d <- snp_dist(sparse.data)
-```
-
-### python
-
-The python version can be run from the python interpreter as 
+The R version is not longer supported but should be able to be installed using devtools or downloaded from its [repository](https://github.com/gtonkinhill/pairsnp-r)
 
 ```
-from pairsnp import calculate_snp_matrix, calculate_distance_matrix
-
-sparse_matrix, consensus, seq_names = calculate_snp_matrix(fasta.file.name)
-d = calculate_distance_matrix(sparse_matrix, consensus, "dist", False)
+#install.packages("devtools")
+devtools::install_github("gtonkinhill/pairsnp-r")
 ```
 
-alternatively if installed using pip it can be used at the command line as
 
-
-```
-pairsnp -f /path/to/msa.fasta -o /path/to/output.csv
-```
-additional options include
-
-```
-Program to calculate pairwise SNP distance and similarity matrices.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -t {sim,dist}, --type {sim,dist}
-                        either sim (similarity) or dist (distance) (default).
-  -n, --inc_n           flag to indicate differences to gaps should be
-                        counted.
-  -f FILENAME, --file FILENAME
-                        location of a multiple sequence alignment. Currently
-                        only DNA alignments are supported.
-  -z, --zipped          Alignment is gzipped.
-  -c, --csv             Output csv-delimited table (default tsv).
-  -o OUTPUT, --out OUTPUT
-                        location of output file.
-```
+## Quick Start
 
 ### c++
 
@@ -134,4 +82,20 @@ OPTIONS
   -t	Number of threads to use (default=1)
   -b	Blank top left corner cell instead of 'pairsnp 0.1.0'
 ```
+
+### Python
+
+See the [Tracs documentation](https://gthlab.au/tracs/#/)
+
+### R
+
+```
+library(pairsnp)
+fasta.file.name <- system.file("extdata", "seqs.fa", package = "pairsnp")
+sparse.data <- import_fasta_sparse(fasta.file.name)
+d <- snp_dist(sparse.data)
+```
+
+
+
 
